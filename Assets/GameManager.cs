@@ -18,13 +18,10 @@ public class GameManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     public void StartPresentation() {
-        SceneManager.LoadScene("P-01");
+        Invoke("StartPresentation_Delayed", 3f);
+    }
+    private void StartPresentation_Delayed() {
+        SceneManager.LoadScene("Scene 1");
     }
 }

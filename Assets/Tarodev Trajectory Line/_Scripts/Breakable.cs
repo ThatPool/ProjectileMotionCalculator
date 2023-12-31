@@ -7,6 +7,7 @@ public class Breakable : MonoBehaviour {
     [SerializeField] private bool _broken;
 
     private void OnCollisionEnter(Collision collision) {
+        if (collision.collider.tag != "Ball") return;
         if (_broken) return;
         if (collision.relativeVelocity.magnitude >= _breakForce) {
             _broken = true;
@@ -15,6 +16,7 @@ public class Breakable : MonoBehaviour {
             var rbs = replacement.GetComponentsInChildren<Rigidbody>();
             foreach (var rb in rbs) {
                 rb.AddExplosionForce(collision.relativeVelocity.magnitude * _collisionMultiplier, collision.contacts[0].point, 2);
+                rb.gameObject.transform.parent = null;
             }
 
             gameObject.SetActive(false);

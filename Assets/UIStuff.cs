@@ -95,33 +95,61 @@ public class UIStuff : MonoBehaviour
 
         toggleRigidbody.onValueChanged.AddListener(delegate { Demo.instance.useRigidbody = toggleRigidbody.isOn; Demo.instance.ToggleRidigbody(); });
 
-        startSimulateButton.onClick.AddListener(delegate { Demo.instance.StartSimulation(); });
-        cancelSimulateButton.onClick.AddListener(delegate { Demo.instance.CancelSimulation(); });
+        startSimulateButton.onClick.AddListener(delegate {
+            if (!Demo.instance.isSimulating)
+            {
+                Demo.instance.StartSimulation();
+            }
+            else
+            {
+                Demo.instance.isSimulationPaused = !Demo.instance.isSimulationPaused;
+            }
+
+            if (!Demo.instance.isSimulationPaused)
+            {
+                startSimulateButton.transform.GetChild(0).GetComponent<TMP_Text>().text = "Pause";
+            }
+            else
+            {
+                startSimulateButton.transform.GetChild(0).GetComponent<TMP_Text>().text = "Resume";
+            }
+        });
+        cancelSimulateButton.onClick.AddListener(delegate {
+            Demo.instance.CancelSimulation();
+        });
+    }
+
+    public void ResetUI_Soft() {
+        startSimulateButton.transform.GetChild(0).GetComponent<TMP_Text>().text = "Simulate";
     }
 
     public void DisableAllEditables()
     {
+        rangeSlider.interactable = false;
         angleSlider.interactable = false;
         stepSlider.interactable = false;
-        iterationsInput.interactable = false;
+        //iterationsInput.interactable = false;
+        rangeInput.interactable = false;
         timeInput.interactable = false;
         forceInput.interactable = false;
         massInput.interactable = false;
         angleInput.interactable = false;
         stepInput.interactable = false;
-        startSimulateButton.interactable = false;
+        //startSimulateButton.interactable = false;
     }
     public void EnableAllEditables()
     {
+        rangeSlider.interactable = true;
         angleSlider.interactable = true;
         stepSlider.interactable = true;
-        iterationsInput.interactable = true;
+        //iterationsInput.interactable = true;
+        rangeInput.interactable = true;
         timeInput.interactable = true;
         forceInput.interactable = true;
         massInput.interactable = true;
         angleInput.interactable = true;
         stepInput.interactable = true;
-        startSimulateButton.interactable = true;
+        //startSimulateButton.interactable = true;
     }
 
     public void UpdateNotEditables()
@@ -135,6 +163,13 @@ public class UIStuff : MonoBehaviour
         maxHeight.text = "Max Height: " + Demo.instance.height.ToString();
 
         totalTime.text = "Total Time: " + Demo.instance.timeToReachEnd.ToString();
+    }
+    public void UpdateEditables()
+    {
+        stepSlider.value = Demo.instance.step;
+        stepInput.text = Demo.instance.step.ToString();
+
+        timeInput.text = Demo.instance.time.ToString();
     }
 
     void IterationsInputEndEdit()
@@ -245,7 +280,6 @@ public class UIStuff : MonoBehaviour
             angleInput.text = angleSlider.value.ToString();
         }
     }
-
 
     void RangeSliderValueChange()
     {

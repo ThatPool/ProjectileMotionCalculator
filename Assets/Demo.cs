@@ -43,15 +43,12 @@ public class Demo : MonoBehaviour
         CalculateProjectileMotion();
     }
 
-    private bool isSimulating = false;
+    public bool isSimulating = false;
+    public bool isSimulationPaused = false;
     public void StartSimulation()
     {
         CancelSimulation();
         UIStuff.instance.DisableAllEditables();
-
-        // Reset the simulation parameters
-        time = 0;
-        step = 0;
 
         // Start the simulation
         isSimulating = true;
@@ -61,6 +58,7 @@ public class Demo : MonoBehaviour
     {
         // Stop the simulation
         isSimulating = false;
+        isSimulationPaused = false;
 
         // Reset the simulation parameters
         time = 0;
@@ -73,6 +71,10 @@ public class Demo : MonoBehaviour
         UIStuff.instance.UpdateNotEditables();
 
         UIStuff.instance.EnableAllEditables();
+
+        UIStuff.instance.UpdateEditables();
+
+        UIStuff.instance.ResetUI_Soft();
     }
 
     private void SimulateProjectileMotion()
@@ -84,6 +86,7 @@ public class Demo : MonoBehaviour
 
             // Calculate the interpolation factor based on current time
             float rr = time / timeToReachEnd;
+            step = rr;
 
             // Calculate the current position based on the interpolation factor
             Vector3 newPosition = Vector3.Lerp(Vector3.Lerp(start.position, mid.position, rr), Vector3.Lerp(mid.position, end.position, rr), rr);
@@ -98,6 +101,8 @@ public class Demo : MonoBehaviour
             {
                 this.transform.position = newPosition;
             }
+
+            UIStuff.instance.UpdateEditables();
         }
         else
         {
@@ -112,6 +117,8 @@ public class Demo : MonoBehaviour
             UIStuff.instance.UpdateNotEditables();
 
             UIStuff.instance.EnableAllEditables();
+
+            UIStuff.instance.ResetUI_Soft();
         }
     }
 
@@ -187,7 +194,10 @@ public class Demo : MonoBehaviour
 
         if (isSimulating)
         {
-            SimulateProjectileMotion();
+            if (!isSimulationPaused)
+            {
+                SimulateProjectileMotion();
+            }
         }
         else
         {
